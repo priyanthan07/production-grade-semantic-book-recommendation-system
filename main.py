@@ -1,11 +1,32 @@
 import uvicorn
+from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from src.logger import custom_logger
 from routes import router as rec_router
+from alembic.config import Config as AlembicConfig
+from alembic.command import upgrade as alembic_upgrade
 from apscheduler.schedulers.background import BackgroundScheduler
 from src.pipelines.periodic_pipeline import periodic_pipeline
 from contextlib import asynccontextmanager
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    
+    alembic_ini_path = (Path(__file__).parent / "alembic.ini").as_posix()
+    alembic_cfg = AlembicConfig(str(alembic_ini_path), attributes={"configure_logger": False})
+
+    custom_logger.info("Attempting to run Alembic migrations on startup...")
+    try:
+        alembic_upgrade(alembic_cfg, "head")  # or however you call it
+    except Exception as e:
+        custom_logger.error(f"Alembic migrations failed: {e}")
+        raise
+    else:
+        custom_logger.info("Alembic migrations successfully applied.")
+        
+    custom_logger.info("Alembic migrations completed. Continuing with app startup.")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

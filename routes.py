@@ -16,7 +16,7 @@ router = APIRouter()
 @router.post("/recommendation")
 async def gen_recommendation(body: Message):
     try:
-        # Get recommendations
+        # Get general recommendations
         return get_recommendations(body.query, body.category, body.tone)
 
     except Exception as e:
@@ -27,7 +27,7 @@ async def gen_recommendation(body: Message):
 @router.get("/popular_recommendation")
 async def pop_recommendation():
     try:
-        # Get recommendations
+        # Get popular recommendations
         return recommend_popular_books()
 
     except Exception as e:
