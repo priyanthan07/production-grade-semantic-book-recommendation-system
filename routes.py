@@ -1,22 +1,38 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+from src.pipelines.inference_pipeline import get_recommendations, recommend_popular_books
+from src.logger import custom_logger
 from pydantic import BaseModel
 
 
 class Message(BaseModel):
-    pool: str
-    sessionId: str
-    messages: list[dict]
-    modelConfig: dict
+    query: str
+    category:str
+    tone:str
 
 
 router = APIRouter()
 
-
-# Invoke the transcripts to SQS Queue
+# general recommendation
 @router.post("/recommendation")
-async def keyserver_call(body: Message):
+async def gen_recommendation(body: Message):
     try:
-        pass
+        # Get recommendations
+        return get_recommendations(body.query, body.category, body.tone)
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing: {e}")
+        custom_logger.error("Error in recommendation endpoint: %s", e)
+        return None
+    
+    
+@router.get("/popular_recommendation")
+async def pop_recommendation():
+    try:
+        # Get recommendations
+        return recommend_popular_books()
+
+    except Exception as e:
+        custom_logger.error("Error in popular_recommendation endpoint: %s", e)
+        return None
+    
+    
+

@@ -78,6 +78,8 @@ def save_cleaned_data_to_db(df, table_name):
         custom_logger.info("Data successfully inserted into %s", table_name)
                 
     except Exception as e:
+        conn.rollback()
+        custom_logger.error("Error inserting data into %s: %s", table_name, e)
         raise e
     finally:
         release_connection(conn)
@@ -109,6 +111,7 @@ def save_popular_data_to_db(df, table_name):
         custom_logger.info("Data successfully inserted into %s", table_name)
                 
     except Exception as e:
+        conn.rollback()
         custom_logger.error("Error inserting data into %s: %s", table_name, e)
         raise e
     
