@@ -54,6 +54,41 @@ def close_pool():
     except Exception as e:
         raise e
     
+def get_query_index():
+    """
+        Get the query index from the index_state table.
+    """
+    try:
+        custom_logger.info("Getting query index...")
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT query_index FROM index_state")
+        query_index = cur.fetchone()
+        cur.close()
+        release_connection(conn)
+        return query_index
+    
+    except Exception as ex:
+        custom_logger.error("Error in get_query_index: %s", ex)
+        return None
+    
+def save_query_index(value):
+    """
+        Get the query index from the index_state table.
+    """
+    try:
+        custom_logger.info("Getting query index...")
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute("UPDATE index_state SET query_index = %s", (value,))
+        
+        conn.commit()
+        cur.close()
+        release_connection(conn)
+    
+    except Exception as ex:
+        custom_logger.error("Error in save_query_index: %s", ex)
     
 def save_cleaned_data_to_db(df, table_name):
     """

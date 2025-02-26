@@ -35,7 +35,7 @@ def get_green_index():
         custom_logger.info("Getting green index...")
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT green-index FROM index_state")
+        cur.execute("SELECT green_index FROM index_state")
         green_index = cur.fetchone()
         cur.close()
         release_connection(conn)
