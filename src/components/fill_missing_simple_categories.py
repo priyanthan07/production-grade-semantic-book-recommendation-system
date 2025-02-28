@@ -3,26 +3,18 @@ import numpy as np
 from transformers import pipeline
 import concurrent.futures
 from ..logger import custom_logger
-from tqdm.auto import tqdm
+from tqdm import tqdm
 
-llm_pipe = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+llm_pipe = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", verbose=False)
 fiction_categories = ["Fiction", "Nonfiction"]
 
-def fill_missing_simple_cat(text):
+def fill_missing_simple_cat(descriptions_list):
+    results = []
     try:
-        result = llm_pipe(text, fiction_categories)
-        return result["labels"][np.argmax(result["scores"])]
-
+        for text in tqdm(descriptions_list, leave=False, desc="Predicting Categories"):
+            result = llm_pipe(text, fiction_categories)
+            results.append(result["labels"][np.argmax(result["scores"])])
+        return results
     except Exception as e:
         custom_logger.error("Error in fill_missing_simple_cat: %s", e)
-        return None
-    
-def fill_missing_simple_cat_parallel(descriptions, max_workers=8):
-    try:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-            results = list(tqdm(executor.map(fill_missing_simple_cat, descriptions),total=len(descriptions), desc="LLM Predictions"))
-        return results
-    
-    except Exception as e:
-        custom_logger.error("Error in fill_missing_simple_cat_parallel: %s", e)
-        return None
+        return [None] * len(descriptions_list)

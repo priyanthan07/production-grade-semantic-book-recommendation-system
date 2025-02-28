@@ -4,9 +4,19 @@ from ..logger import custom_logger
 
 
 def get_popular_books_df()-> pd.DataFrame:
+    """
+        Get the popular books data from the popular_recommendations table.
+    """
+    
     conn = get_db_connection()
     try:
-        df = pd.read_sql("SELECT * FROM popular_recommendations", con=conn)
+        custom_logger.info("Getting popular books data from popular_recommendations table...")
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM popular_recommendations")
+        rows = cur.fetchall()
+        columns = [desc[0] for desc in cur.description]
+        df = pd.DataFrame(rows, columns=columns)
+        cur.close()
         return df
     
     except Exception as e:

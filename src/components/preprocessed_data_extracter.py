@@ -6,7 +6,18 @@ from ..logger import custom_logger
 def get_cleaned_books_df()-> pd.DataFrame:
     conn = get_db_connection()
     try:
-        df = pd.read_sql("SELECT * FROM preprocessed_books_data", con=conn)
+        
+        query = "SELECT * FROM preprocessed_books_data"
+        
+        cur = conn.cursor()
+        cur.execute(query)
+        rows = cur.fetchall()                   # Fetch all rows as a list of tuples
+        columns = [desc[0] for desc in cur.description]  # Extract column names
+        cur.close()
+
+        # Convert the list of tuples to a Pandas DataFrame with appropriate column names
+        df = pd.DataFrame(rows, columns=columns)
+        
         return df
     
     except Exception as e:
@@ -15,6 +26,3 @@ def get_cleaned_books_df()-> pd.DataFrame:
     
     finally:
         release_connection(conn)
-        
-    
-
