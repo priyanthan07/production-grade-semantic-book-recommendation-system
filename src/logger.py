@@ -1,4 +1,5 @@
 import logging
+import warnings
 import coloredlogs
 
 # Define custom color styles for each log level
@@ -25,4 +26,8 @@ coloredlogs.install(
 )
 
 custom_logger = logging.getLogger(__name__)
+
+logging.getLogger("transformers").setLevel(logging.ERROR)
+logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
+warnings.filterwarnings("ignore")
 logging.captureWarnings(True)

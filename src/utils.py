@@ -58,6 +58,7 @@ def get_query_index():
     """
         Get the query index from the index_state table.
     """
+    conn = None
     try:
         custom_logger.info("Getting query index...")
         conn = get_db_connection()
@@ -65,12 +66,14 @@ def get_query_index():
         cur.execute("SELECT query_index FROM index_state")
         query_index = cur.fetchone()
         cur.close()
-        release_connection(conn)
+
         return query_index
     
     except Exception as ex:
         custom_logger.error("Error in get_query_index: %s", ex)
         return None
+    finally:
+        release_connection(conn)
     
 def save_query_index(value):
     """
@@ -131,9 +134,9 @@ def save_popular_data_to_db(df, table_name):
         cursor.execute(f"TRUNCATE TABLE {table_name}")
         conn.commit()
         
-        custom_logger.info("Saving popular books data to %s table...", table_name)
         columns = list(df.columns)
         cols_str = ", ".join(columns)
+        custom_logger.info("Saving popular books data to %s table. columns : %s", table_name, cols_str)
         
         # Convert DataFrame rows into a list of tuples
         data_tuples = [tuple(row) for row in df.to_numpy()]
