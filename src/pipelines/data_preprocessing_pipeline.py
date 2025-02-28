@@ -1,6 +1,6 @@
 from ..logger import custom_logger
 from ..components.raw_data_extracter import get_raw_books_df
-from ..components.fill_missing_simple_categories import fill_missing_simple_cat_parallel
+from ..components.fill_missing_simple_categories import fill_missing_simple_cat
 from ..components.map_categories import get_simplified_categories
 from ..utils import save_cleaned_data_to_db
 import numpy as np
@@ -42,7 +42,7 @@ def data_cleaning()-> pd.DataFrame:
             descriptions = cleaned_df.loc[missing_cat_mask, "description"].tolist()
             
             # Process the descriptions in parallel
-            predictions = fill_missing_simple_cat_parallel(descriptions)
+            predictions = fill_missing_simple_cat(descriptions)
             
             # Assign the predictions back to the DataFrame
             cleaned_df.loc[missing_cat_mask, "simple_categories"] = predictions

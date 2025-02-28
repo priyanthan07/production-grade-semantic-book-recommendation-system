@@ -10,10 +10,9 @@ def sentiment_analysis(preprocessed_df)-> pd.DataFrame:
         Takes in a preprocessed DataFrame and returns the DataFrame with emotion scores added.
     """
     try:
-        custom_logger.info("Calculating emotion scores...")
         # Calculate emotion scores
         sentiment_df = calculate_emotion_scores(preprocessed_df)
-        custom_logger.info("Emotion scores calculated successfully.{sentiment_df.shape}")
+        custom_logger.info("Emotion scores calculated successfully: %s", sentiment_df.shape)
         
         save_cleaned_data_to_db(sentiment_df, "preprocessed_books_data")
         
