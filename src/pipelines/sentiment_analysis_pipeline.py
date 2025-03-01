@@ -1,9 +1,9 @@
 from ..components.get_emotion_scores import calculate_emotion_scores
 from ..utils import  save_cleaned_data_to_db
-from ..logger import custom_logger
+from ..logger import get_logger
 import pandas as pd
 
-
+custom_logger = get_logger()
 
 def sentiment_analysis(preprocessed_df)-> pd.DataFrame:
     """

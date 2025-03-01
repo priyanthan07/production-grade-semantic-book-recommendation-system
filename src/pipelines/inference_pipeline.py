@@ -1,8 +1,8 @@
 from ..components.inference_engine import recommend_book
-from ..logger import custom_logger
+from ..logger import get_logger
 import pandas as pd
 
-
+custom_logger = get_logger()
 
 def get_recommendations(query: str, category:str, tone:str)-> pd.DataFrame:
     """

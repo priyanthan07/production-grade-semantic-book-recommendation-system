@@ -1,7 +1,9 @@
 import pandas as pd
-from ..logger import custom_logger
+from ..logger import get_logger
 from ..components.preprocessed_data_extracter import get_cleaned_books_df
 from ..utils import save_popular_data_to_db
+
+custom_logger = get_logger()
 
 def popular_recommendations(n: int = 10) -> pd.DataFrame:
     """
