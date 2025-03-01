@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 from transformers import pipeline
 import concurrent.futures
-from ..logger import custom_logger
+from ..logger import get_logger
 from tqdm import tqdm
+
+custom_logger = get_logger()
 
 llm_pipe = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", verbose=False)
 fiction_categories = ["Fiction", "Nonfiction"]

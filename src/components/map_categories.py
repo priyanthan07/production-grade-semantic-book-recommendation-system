@@ -1,7 +1,7 @@
 import pandas as pd
-from ..logger import custom_logger
+from ..logger import get_logger
 
-
+custom_logger = get_logger()
 
 def get_simplified_categories(df: pd.DataFrame)-> pd.DataFrame:
     try:

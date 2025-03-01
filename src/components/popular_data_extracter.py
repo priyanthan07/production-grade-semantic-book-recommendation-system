@@ -1,7 +1,8 @@
 import pandas as pd
 from ..utils import get_db_connection, release_connection
-from ..logger import custom_logger
+from ..logger import get_logger
 
+custom_logger = get_logger()
 
 def get_popular_books_df()-> pd.DataFrame:
     """

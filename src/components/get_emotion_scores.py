@@ -1,5 +1,5 @@
 from transformers import pipeline
-from ..logger import custom_logger
+from ..logger import get_logger
 import numpy as np
 import time
 import pandas as pd
@@ -8,6 +8,7 @@ from tqdm import tqdm
 emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", top_k = None, verbose=False)
 emotion_labels = ["anger", "disgust", "fear", "joy", "sadness", "surprise", "neutral"]
 
+custom_logger = get_logger()
 
 def safe_emotion_classifier(sentences, retries=2, delay=1):
     if not sentences:

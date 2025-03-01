@@ -1,26 +1,21 @@
 from dotenv import load_dotenv
-from ..logger import custom_logger
+from ..logger import get_logger
 from ..utils import get_db_connection, release_connection
 # Updated imports to use the correct packages
-from langchain_community.vectorstores import Pinecone
-from langchain_openai import OpenAIEmbeddings  # Updated import for OpenAIEmbeddings
-import pinecone
+from pinecone.grpc import PineconeGRPC as Pinecone
+from pinecone import ServerlessSpec# Updated import for OpenAIEmbeddings
 import os
-
+from dotenv import load_dotenv
+from openai import OpenAI
 # Load environment variables
+
 load_dotenv()
 
-# Check if OpenAI API key is set properly
-def check_openai_key():
-    """Check if the OpenAI API key is properly set"""
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        custom_logger.error("OPENAI_API_KEY is not set in environment variables or .env file")
-        return False
-    if api_key.startswith("sk-") and len(api_key) > 20:
-        return True
-    custom_logger.error("OPENAI_API_KEY appears to be invalid. It should start with 'sk-' and be longer than 20 characters")
-    return False
+client = OpenAI()
+pc = Pinecone()
+spec = ServerlessSpec(cloud="aws", region="us-east-1")
+
+custom_logger = get_logger()
 
 def get_blue_index():
     """
@@ -105,48 +100,33 @@ def validate_green_index(index_name: str) -> bool:
         3. Returning True if it meets the required criteria, False otherwise.
     """
     try:
-        # Check OpenAI API key first
-        if not check_openai_key():
-            custom_logger.error("OpenAI API key validation failed. Cannot proceed with index validation.")
-            return False
             
         custom_logger.info(f"Validating green index: {index_name}")
 
         # Initialize Pinecone client
-        pinecone_client = pinecone.Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-        index = pinecone_client.Index(index_name)
+        index = pc.Index(index_name)
         
         # 1. Check index stats
         stats = index.describe_index_stats()
         total_vectors = stats["total_vector_count"]
-        custom_logger.info(f"Index '{index_name}' has {total_vectors} vectors.")
 
         # threshold check: ensure the new index has at least 10 vectors
-        if total_vectors <= 1:
+        if total_vectors <= 5:
             custom_logger.error(f"Validation failed: index '{index_name}' has too few vectors ({total_vectors}).")
             return False
-
-        embeddings = OpenAIEmbeddings(
-            model="text-embedding-3-small",  # Specify model explicitly
-            openai_api_key=os.getenv("OPENAI_API_KEY")  # Pass API key explicitly
-        )
         
-        vectorstore = Pinecone(
-            index=index,  # Pass the initialized index directly
-            embedding=embeddings,
-            text_key="text"  # Specify the key that contains the text in your documents
-        )
+        custom_logger.info(f"Index '{index_name}' has {total_vectors} vectors.")
+        
+        test_query = "magic wizard adventure"
+        query_embd = client.embeddings.create(input=test_query, model="text-embedding-3-small").data[0].embedding
 
         # A test query you expect to have relevant results
-        test_query = "magic wizard adventure"
-        query_results = vectorstore.similarity_search(test_query, k=3)
-
+        query_results = index.query(vector=query_embd, top_k=5, include_metadata=True, namespace="default")
         if not query_results:
             custom_logger.error(f"Validation failed: no results returned for test query '{test_query}'.")
             return False
 
-        custom_logger.info(f"Validation success: found {len(query_results)} results for test query '{test_query}'.")
-
+        custom_logger.info(f"Validation success: found {len(query_results['matches'])} results for test query '{test_query}'.")
         return True
 
     except Exception as e:
@@ -156,15 +136,14 @@ def validate_green_index(index_name: str) -> bool:
 
 def clear_index(index_name: str) -> None:
     """
-    Clears (or deletes) all vectors in the specified Pinecone index.
+        Clears (or deletes) all vectors in the specified Pinecone index.
     """
     try:
         custom_logger.info(f"Clearing index: {index_name}")
-        pinecone_client = pinecone.Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-        index = pinecone_client.Index(index_name)
+        index = pc.Index(index_name)
 
         # Using the updated API syntax: delete_all instead of deleteAll
-        index.delete(delete_all=True)
+        index.delete(delete_all=True, namespace="default")
         custom_logger.info(f"Index '{index_name}' cleared successfully.")
 
     except Exception as e:

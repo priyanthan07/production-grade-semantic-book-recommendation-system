@@ -1,6 +1,8 @@
 import pandas as pd
 from ..utils import get_db_connection, release_connection, get_query_index, save_query_index
-from ..logger import custom_logger
+from ..logger import get_logger
+
+custom_logger = get_logger()
 
 
 def get_raw_books_df()-> pd.DataFrame:

@@ -1,17 +1,21 @@
 import os
 import pandas as pd
 from dotenv import load_dotenv
-from ..logger import custom_logger
-from langchain.vectorstores import Pinecone
-from langchain.embeddings import OpenAIEmbeddings
+from ..logger import get_logger
 from ..components.blue_green_index_management import get_blue_index
 from ..components.preprocessed_data_extracter import get_cleaned_books_df
 from ..components.popular_data_extracter import get_popular_books_df
+from pinecone.grpc import PineconeGRPC as Pinecone
+from pinecone import ServerlessSpec
+from openai import OpenAI
 
 load_dotenv()
 
-embeddings = OpenAIEmbeddings()
+client = OpenAI()
+pc = Pinecone()
+spec = ServerlessSpec(cloud="aws", region="us-east-1")
 
+custom_logger = get_logger()
 
 def retrieve_semantic_recommendation(
                         query: str,
@@ -21,20 +25,18 @@ def retrieve_semantic_recommendation(
                         final_top_k: int = 16,
                     ) -> pd.DataFrame:
     try:
-        index_name = get_blue_index()
-        if index_name is None:
+        blue_index_name = get_blue_index()
+        if blue_index_name is None:
             return None
         
-        vectorstore = Pinecone(
-            index_name=index_name,
-            embedding=embeddings
-        )
-        
+        blue_index = pc.Index(blue_index_name)
         books = get_cleaned_books_df()
-        
-        recommendations = vectorstore.similarity_search(query, k=initial_top_k)
+        query_embd = client.embeddings.create(input=query, model="text-embedding-3-small").data[0].embedding
 
-        rec_books_isbn_list = [int(recommendation.page_content.strip('"').split()[0]) for recommendation in recommendations]
+        # A test query you expect to have relevant results
+        recommendations = blue_index.query(vector=query_embd, top_k=5, include_metadata=True, namespace="default")
+
+        rec_books_isbn_list = [int(recommendation['metadata']['text'].strip('"').split()[0]) for recommendation in recommendations['matches']]
         books_rec_list = books[books["isbn13"].isin(rec_books_isbn_list)].head(final_top_k)
         
         if category != "All":
@@ -80,7 +82,7 @@ def recommend_book(query: str, category:str, tone:str):
                 authers_str=row["authors"]
                 
             caption = f"{row['title']} by {authers_str}: {truncated_desc}"
-            results.append((row["large_thumbnail"], caption))
+            results.append((row["thumbnail"], caption))
         return results
     
     except Exception as ex:
@@ -89,7 +91,6 @@ def recommend_book(query: str, category:str, tone:str):
     
     
 def recommend_popular_books():
-    
     try:
         books = get_cleaned_books_df()
         pop_books_list = get_popular_books_df()
@@ -113,9 +114,10 @@ def recommend_popular_books():
                 authers_str=row["authors"]
                 
             caption = f"{row['title']} by {authers_str}: {truncated_desc}"
-            results.append((row["large_thumbnail"], caption))
+            results.append((row["thumbnail"], caption))
         return results
     
     except Exception as ex:
-        custom_logger.error("Error in recommend_book: %s", ex)
+        custom_logger.error("Error in recommend_popular_books: %s", ex)
         return None
+    
