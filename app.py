@@ -59,20 +59,20 @@ left_col, right_col = st.columns([1, 3], gap="large")
 # ---------- Left Column: Search Controls ----------
 with left_col:
     st.subheader("Enter a description of a book:")
-    query = st.text_input("", placeholder="e.g., A story about forgiveness")
+    query = st.text_input("Book Description", placeholder="e.g., A story about forgiveness", label_visibility="hidden")
     
     st.subheader("Category")
-    category = st.selectbox("", ["All", "Fiction", "Nonfiction"])
+    category = st.selectbox("Category", ["All", "Fiction", "Nonfiction"], label_visibility="visible")
     
     st.subheader("Tone")
-    tone = st.selectbox("", ["All", "Happy", "Surprising", "Angry", "Suspenseful", "Sad"])
+    tone = st.selectbox("Tone", ["All", "Happy", "Surprising", "Angry", "Suspenseful", "Sad"], label_visibility="visible")
     
     if st.button("Search"):
         # Call your FastAPI general recommendation endpoint
         # Replace with your actual API URL, e.g., "http://localhost:8000/recommendation"
         payload = {"query": query, "category": category, "tone": tone}
         try:
-            response = requests.post("http://localhost:8000/recommendation", json=payload)
+            response = requests.post("http://localhost:8000/recommendations", json=payload)
             if response.status_code == 200:
                 st.session_state["general_recs"] = response.json()  # list of [thumbnail_url, caption]
             else:
@@ -92,7 +92,7 @@ with right_col:
         # Refresh button
         if st.button("Refresh Popular Recommendations"):
             try:
-                pop_resp = requests.get("http://localhost:8000/popular_recommendation")
+                pop_resp = requests.get("http://localhost:8000/popular_recommendations")
                 if pop_resp.status_code == 200:
                     st.session_state["popular_recs"] = pop_resp.json()  # list of [thumbnail_url, caption]
                 else:
@@ -108,7 +108,7 @@ with right_col:
                 try:
                     img_response = requests.get(rec[0])
                     img = Image.open(BytesIO(img_response.content))
-                    st.image(img, use_column_width=True)
+                    st.image(img, use_container_width=True)
                 except:
                     st.write("Image unavailable")
                 st.caption(rec[1])
@@ -126,7 +126,7 @@ with right_col:
                 try:
                     img_response = requests.get(rec[0])
                     img = Image.open(BytesIO(img_response.content))
-                    st.image(img, use_column_width=True)
+                    st.image(img, use_container_width=True)
                 except:
                     st.write("Image unavailable")
                 st.caption(rec[1])

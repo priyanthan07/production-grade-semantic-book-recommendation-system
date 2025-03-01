@@ -1,19 +1,20 @@
 from fastapi import APIRouter
-from src.pipelines.inference_pipeline import get_recommendations, recommend_popular_books
-from src.logger import custom_logger
+from src.pipelines.inference_pipeline import get_recommendations
+from src.components.inference_engine import recommend_popular_books
+from src.logger import get_logger
 from pydantic import BaseModel
 
+custom_logger = get_logger()
 
 class Message(BaseModel):
     query: str
     category:str
     tone:str
 
-
 router = APIRouter()
 
 # general recommendation
-@router.post("/recommendation")
+@router.post("/recommendations")
 async def gen_recommendation(body: Message):
     try:
         # Get general recommendations
@@ -24,7 +25,7 @@ async def gen_recommendation(body: Message):
         return None
     
     
-@router.get("/popular_recommendation")
+@router.get("/popular_recommendations")
 async def pop_recommendation():
     try:
         # Get popular recommendations
