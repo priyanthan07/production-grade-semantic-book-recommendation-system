@@ -11,6 +11,7 @@ def create_indexes(index_name):
     pc.create_index(
         name=index_name,
         dimension=1536,
+        namespace="default",
         metric="cosine",
         spec=ServerlessSpec(
             cloud="aws",

@@ -2,9 +2,11 @@ import os
 import psycopg2
 from psycopg2 import extras
 from psycopg2 import pool
-from .logger import custom_logger
+from .logger import get_logger
 from dotenv import load_dotenv
 load_dotenv()
+
+custom_logger = get_logger()
 
 try:
     connection_pool = pool.SimpleConnectionPool(
