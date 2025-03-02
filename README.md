@@ -2,8 +2,8 @@
 
 ![image](https://github.com/user-attachments/assets/d0a48ab6-9a1e-483b-836a-179fabfd7264)
 
-
-sample logs for periodic runner:
+## sample logs for periodic runner:
+```
 2025-03-02 09:50:32 [INFO] Starting periodic pipeline execution.
 2025-03-02 09:50:32 [INFO] Running periodic data pipelines...
 2025-03-02 09:50:32 [INFO] Starting data cleaning pipeline...
@@ -115,7 +115,8 @@ Inserting vectors: 100%|██████████████████�
 2025-03-02 10:08:15 [INFO] Old blue index 'book-index1' cleared
 2025-03-02 10:08:15 [INFO] Vector database management completed successfully.
 2025-03-02 10:08:15 [INFO] Periodic pipeline completed successfully.
+```
 2025-03-02 10:08:15 [INFO] Periodic pipeline execution completed successfully.
 2025-03-02 10:08:15 [INFO] ============   Total time taken: 462.26638174057007 seconds ==================================================
 
-
+###
