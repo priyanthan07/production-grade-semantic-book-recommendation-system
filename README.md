@@ -115,8 +115,7 @@ Inserting vectors: 100%|██████████████████�
 2025-03-02 10:08:15 [INFO] Old blue index 'book-index1' cleared
 2025-03-02 10:08:15 [INFO] Vector database management completed successfully.
 2025-03-02 10:08:15 [INFO] Periodic pipeline completed successfully.
-```
 2025-03-02 10:08:15 [INFO] Periodic pipeline execution completed successfully.
 2025-03-02 10:08:15 [INFO] ============   Total time taken: 462.26638174057007 seconds ==================================================
 
-###
+```
