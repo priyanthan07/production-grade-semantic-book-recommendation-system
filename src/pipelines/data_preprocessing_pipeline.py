@@ -1,8 +1,7 @@
 from ..logger import get_logger
-from ..components.raw_data_extracter import get_raw_books_df
+from ..components.raw_data_extractor import get_raw_books_df
 from ..components.fill_missing_simple_categories import fill_missing_simple_cat
 from ..components.map_categories import get_simplified_categories
-from ..utils import save_cleaned_data_to_db
 import numpy as np
 import pandas as pd
 

@@ -1,8 +1,10 @@
 # from src.pipelines.data_preprocessing_pipeline import data_cleaning
 # from src.pipelines.sentiment_analysis_pipeline import sentiment_analysis
 # from src.pipelines.popular_recommendation_pipeline import popular_recommendations
-from src.pipelines.vector_db_pipeline import manage_vector_db
+# from src.pipelines.vector_db_pipeline import manage_vector_db
+from src.components.preprocessed_data_extracter import get_cleaned_books_df
 import pandas as pd
+import json
 
 
 if __name__ == "__main__":
@@ -50,4 +52,7 @@ if __name__ == "__main__":
     # print(df.isna().sum())
     
     # popular_recommendations(10)
-    manage_vector_db()
+    df = get_cleaned_books_df()
+    df = df.head(2)
+    json_str = df.to_json(orient="records")
+    print(json_str)
