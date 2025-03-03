@@ -14,5 +14,5 @@ def get_recommendations(query: str, category:str, tone:str)-> pd.DataFrame:
         return recommend_book(query, category, tone)
         
     except Exception as ex:
-        custom_logger.error("Error in sentiment_analysis_pipeline: %s", ex)
+        custom_logger.error(f"Error in sentiment_analysis_pipeline: {ex}", exc_info=True)
         return None

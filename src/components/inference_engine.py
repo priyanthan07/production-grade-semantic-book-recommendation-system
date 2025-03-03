@@ -58,7 +58,7 @@ def retrieve_semantic_recommendation(
         return books_rec_list
     
     except Exception as ex:
-        custom_logger.error("Error in retrieve_semantic_recommendation: %s", ex)
+        custom_logger.error(f"Error in retrieve_semantic_recommendation: {ex}", exc_info=True)
         return None
 
 
@@ -86,7 +86,7 @@ def recommend_book(query: str, category:str, tone:str):
         return results
     
     except Exception as ex:
-        custom_logger.error("Error in recommend_book: %s", ex)
+        custom_logger.error(f"Error in recommend_book: {ex}", exc_info=True)
         return None
     
     
@@ -118,6 +118,6 @@ def recommend_popular_books():
         return results
     
     except Exception as ex:
-        custom_logger.error("Error in recommend_popular_books: %s", ex)
+        custom_logger.error(f"Error in recommend_popular_books: {ex}", exc_info=True)
         return None
     
