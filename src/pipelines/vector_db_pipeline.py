@@ -93,10 +93,10 @@ def manage_vector_db():
                 
                 except Exception as e:
                     retry_count += 1
-                    custom_logger.error(f"Error upserting vectors (attempt {retry_count}/{max_retries}): {e}")
+                    custom_logger.error(f"Error upserting vectors (attempt {retry_count}/{max_retries}): {e}", exc_info=True)
                     time.sleep(2 * retry_count)  # Exponential backoff
                     if retry_count == max_retries:
-                        custom_logger.error("Max retries reached, moving to next batch")
+                        custom_logger.error("Max retries reached, moving to next batch", exc_info=True)
             
             # Get stats after upserting
             time.sleep(1)  # Wait for stats to update
@@ -112,9 +112,9 @@ def manage_vector_db():
                     if query_results and ids_batch[0] in query_results.get('vectors', {}):
                         custom_logger.info(f"Vector {ids_batch[0]} was successfully fetched despite count not increasing")
                     else:
-                        custom_logger.error(f"Vector {ids_batch[0]} was not found in index")
+                        custom_logger.error(f"Vector {ids_batch[0]} was not found in index", exc_info=True)
                 except Exception as fetch_error:
-                    custom_logger.error(f"Error fetching vector: {fetch_error}")
+                    custom_logger.error(f"Error fetching vector: {fetch_error}", exc_info=True)
         
         # Final check of index stats
         final_stats = green_index.describe_index_stats()
@@ -131,8 +131,8 @@ def manage_vector_db():
             custom_logger.info(f"Old blue index '{blue_index_name}' cleared")
         else:
             # Validation failed, revert to the existing blue index
-            custom_logger.error("Green index validation failed. Rollback to the existing blue index and clear the green index")
+            custom_logger.error("Green index validation failed. Rollback to the existing blue index and clear the green index", exc_info=True)
             clear_index(green_index_name)
             
     except Exception as ex:
-        custom_logger.error("Error in vector_db_pipeline: %s", ex)
+        custom_logger.error(f"Error in vector_db_pipeline: {ex}", exc_info=True)

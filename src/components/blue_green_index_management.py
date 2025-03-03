@@ -33,7 +33,7 @@ def get_blue_index():
         return blue_index[0] if blue_index else None
     
     except Exception as ex:
-        custom_logger.error("Error in get_blue_index: %s", ex)
+        custom_logger.error(f"Error in get_blue_index: {ex}", exc_info=True)
         return None
     
 def get_green_index():
@@ -52,7 +52,7 @@ def get_green_index():
         return green_index[0] if green_index else None
     
     except Exception as ex:
-        custom_logger.error("Error in get_green_index: %s", ex)
+        custom_logger.error(f"Error in get_green_index: {ex}", exc_info=True)
         return None
     
 def save_blue_index(value):
@@ -71,7 +71,7 @@ def save_blue_index(value):
         release_connection(conn)
     
     except Exception as ex:
-        custom_logger.error("Error in save_blue_index: %s", ex)
+        custom_logger.error(f"Error in save_blue_index: {ex}", exc_info=True)
     
 def save_green_index(value):
     """
@@ -89,7 +89,7 @@ def save_green_index(value):
         release_connection(conn)
     
     except Exception as ex:
-        custom_logger.error("Error in save_green_index: %s", ex)
+        custom_logger.error(f"Error in save_green_index: {ex}", exc_info=True)
         
         
 def validate_green_index(index_name: str) -> bool:
@@ -112,7 +112,7 @@ def validate_green_index(index_name: str) -> bool:
 
         # threshold check: ensure the new index has at least 10 vectors
         if total_vectors <= 5:
-            custom_logger.error(f"Validation failed: index '{index_name}' has too few vectors ({total_vectors}).")
+            custom_logger.error(f"Validation failed: index '{index_name}' has too few vectors ({total_vectors}).", exc_info=True)
             return False
         
         custom_logger.info(f"Index '{index_name}' has {total_vectors} vectors.")
@@ -123,14 +123,14 @@ def validate_green_index(index_name: str) -> bool:
         # A test query you expect to have relevant results
         query_results = index.query(vector=query_embd, top_k=5, include_metadata=True, namespace="default")
         if not query_results:
-            custom_logger.error(f"Validation failed: no results returned for test query '{test_query}'.")
+            custom_logger.error(f"Validation failed: no results returned for test query '{test_query}'.", exc_info=True)
             return False
 
         custom_logger.info(f"Validation success: found {len(query_results['matches'])} results for test query '{test_query}'.")
         return True
 
     except Exception as e:
-        custom_logger.error(f"Error validating green index '{index_name}': {e}")
+        custom_logger.error(f"Error validating green index '{index_name}': {e}", exc_info=True)
         return False
 
 
@@ -147,4 +147,4 @@ def clear_index(index_name: str) -> None:
         custom_logger.info(f"Index '{index_name}' cleared successfully.")
 
     except Exception as e:
-        custom_logger.error(f"Failed to clear index '{index_name}': {e}")
+        custom_logger.error(f"Failed to clear index '{index_name}': {e}", exc_info=True)
