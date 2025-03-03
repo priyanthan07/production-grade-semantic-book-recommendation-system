@@ -21,7 +21,7 @@ async def gen_recommendation(body: Message):
         return get_recommendations(body.query, body.category, body.tone)
 
     except Exception as e:
-        custom_logger.error("Error in recommendation endpoint: %s", e)
+        custom_logger.error(f"Error in recommendation endpoint: {e}", exc_info=True )
         return None
     
     
@@ -32,7 +32,7 @@ async def pop_recommendation():
         return recommend_popular_books()
 
     except Exception as e:
-        custom_logger.error("Error in popular_recommendation endpoint: %s", e)
+        custom_logger.error(f"Error in popular_recommendation endpoint:{e}", exc_info=True)
         return None
     
     

@@ -72,7 +72,7 @@ def get_query_index():
         return query_index
     
     except Exception as ex:
-        custom_logger.error("Error in get_query_index: %s", ex)
+        custom_logger.error(f"Error in get_query_index: {e}", exc_info=True)
         return None
     finally:
         release_connection(conn)
@@ -93,7 +93,7 @@ def save_query_index(value):
         release_connection(conn)
     
     except Exception as ex:
-        custom_logger.error("Error in save_query_index: %s", ex)
+        custom_logger.error(f"Error in save_query_index: {e}", exc_info=True)
     
 def save_cleaned_data_to_db(df, table_name):
     """
@@ -119,7 +119,7 @@ def save_cleaned_data_to_db(df, table_name):
                 
     except Exception as e:
         conn.rollback()
-        custom_logger.error("Error inserting data into %s: %s", table_name, e)
+        custom_logger.error(f"Error inserting data into {table_name}: {e}", exc_info=True)
         raise e
     finally:
         release_connection(conn)
@@ -152,7 +152,7 @@ def save_popular_data_to_db(df, table_name):
                 
     except Exception as e:
         conn.rollback()
-        custom_logger.error("Error inserting data into %s: %s", table_name, e)
+        custom_logger.error(f"Error inserting data into {table_name}: {e}", exc_info=True)
         raise e
     
     finally:

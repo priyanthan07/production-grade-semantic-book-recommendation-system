@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import time
 from datetime import datetime, timedelta
 from apscheduler.schedulers.blocking import BlockingScheduler
 from src.pipelines.periodic_pipeline import periodic_pipeline
@@ -10,11 +11,15 @@ custom_logger = get_logger()
 
 def run_periodic_pipeline():
     try:
-        custom_logger.info("Starting periodic pipeline execution...")
+        start = time.time()
+        custom_logger.info("Starting periodic pipeline execution.",)
         periodic_pipeline()
+        end = time.time()
         custom_logger.info("Periodic pipeline execution completed successfully.")
+        custom_logger.info(f"============   Total time taken: {end - start} seconds ==================================================")
+        
     except Exception as ex:
-        custom_logger.error(f"Error in periodic pipeline: {ex}", exc_info=True)
+        custom_logger.error(f"Error in run_periodic_pipeline: {ex}", exc_info=True)
 
 def main():
     scheduler = BlockingScheduler()
@@ -31,12 +36,12 @@ def main():
     scheduler.add_job(
         run_periodic_pipeline,
         'interval',
-        minutes=24,
+        minutes=10,
         id='periodic_pipeline',
         replace_existing=True
     )
     
-    custom_logger.info("Periodic pipeline scheduler started; initial job scheduled immediately, then every 24 minutes.")
+    custom_logger.info("Periodic pipeline scheduler started; initial job scheduled immediately, then every 10 minutes.")
     
     try:
         scheduler.start()
