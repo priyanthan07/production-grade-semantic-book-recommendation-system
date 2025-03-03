@@ -18,7 +18,7 @@ def popular_recommendations(n: int = 10) -> pd.DataFrame:
         required_columns = ["isbn13", "title", "average_rating", "ratings_count"]
         if not all(col in df.columns for col in required_columns):
             missing = [col for col in required_columns if col not in df.columns]
-            custom_logger.error(f"Missing required columns: {missing}")
+            custom_logger.error(f"Missing required columns: {missing}", exc_info=True)
             return None
         
         # Select and sort by popularity
@@ -62,5 +62,5 @@ def popular_recommendations(n: int = 10) -> pd.DataFrame:
         return top_n
     
     except Exception as ex:
-        custom_logger.error(f"Error in popularity_recommendation_pipeline: {ex}")
+        custom_logger.error(f"Error in popularity_recommendation_pipeline: {ex}", exc_info=True)
         return None

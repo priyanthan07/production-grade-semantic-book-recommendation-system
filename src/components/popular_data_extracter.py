@@ -21,7 +21,7 @@ def get_popular_books_df()-> pd.DataFrame:
         return df
     
     except Exception as e:
-        custom_logger.error("Error in get_popular_books_df: %s", e)
+        custom_logger.error(f"Error in get_popular_books_df: {e}", exc_info=True)
         return None
     
     finally:
