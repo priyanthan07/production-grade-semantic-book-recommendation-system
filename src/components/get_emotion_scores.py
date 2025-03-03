@@ -77,7 +77,7 @@ def calculate_max_scores(predictions):
         return result
         
     except Exception as e:
-        custom_logger.error(f"Error in calculate_max_scores: {str(e)}")
+        custom_logger.error(f"Error in calculate_max_scores: {str(e)}", exc_info=True)
         return None
 
 
@@ -138,7 +138,7 @@ def calculate_emotion_scores(df: pd.DataFrame) -> pd.DataFrame:
                         result_data[label].append(max_scores.get(label, None))
                         
                 except Exception as e:
-                    custom_logger.error(f"Error processing item {i} (ISBN: {df.iloc[i].get('isbn13', 'unknown')}): {str(e)}")
+                    custom_logger.error(f"Error processing item {i} (ISBN: {df.iloc[i].get('isbn13', 'unknown')}): {str(e)}", exc_info=True)
                     # Add None values for all emotion scores for this row
                     for label in emotion_labels:
                         result_data[label].append(None)
@@ -150,10 +150,10 @@ def calculate_emotion_scores(df: pd.DataFrame) -> pd.DataFrame:
             return pd.merge(df, emotions_df, on="isbn13", how="left")
             
         except Exception as e:
-            custom_logger.error(f"Error in processing loop: {str(e)}")
+            custom_logger.error(f"Error in processing loop: {str(e)}", exc_info=True)
             return df
             
     except Exception as e:
-        custom_logger.error(f"Error in calculate_emotion_scores: {str(e)}")
+        custom_logger.error(f"Error in calculate_emotion_scores: {str(e)}", exc_info=True)
         return df
     

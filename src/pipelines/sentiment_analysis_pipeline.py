@@ -21,5 +21,5 @@ def sentiment_analysis(preprocessed_df)-> pd.DataFrame:
         return sentiment_df
         
     except Exception as ex:
-        custom_logger.error("Error in sentiment_analysis_pipeline: %s", ex)
+        custom_logger.error("Error in sentiment_analysis_pipeline: {ex}", exc_info=True)
         return None
