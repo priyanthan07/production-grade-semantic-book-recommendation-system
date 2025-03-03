@@ -62,4 +62,4 @@ def data_cleaning()-> pd.DataFrame:
         return cleaned_df
 
     except Exception as ex:
-        custom_logger.error("Error in data_cleaning_pipeline: %s", ex)
+        custom_logger.error(f"Error in data_cleaning_pipeline: [ex]", exc_info=True)

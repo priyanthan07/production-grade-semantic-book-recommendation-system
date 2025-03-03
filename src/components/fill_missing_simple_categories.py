@@ -18,5 +18,5 @@ def fill_missing_simple_cat(descriptions_list):
             results.append(result["labels"][np.argmax(result["scores"])])
         return results
     except Exception as e:
-        custom_logger.error("Error in fill_missing_simple_cat: %s", e)
+        custom_logger.error(f"Error in fill_missing_simple_cat: {e}", exc_info=True)
         return [None] * len(descriptions_list)
