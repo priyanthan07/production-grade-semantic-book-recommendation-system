@@ -2,7 +2,7 @@
 
 ![image](https://github.com/user-attachments/assets/d0a48ab6-9a1e-483b-836a-179fabfd7264)
 
-#### blog 1 :
+#### blog 1 : https://medium.com/@govindarajpriyanthan/building-a-semantic-book-recommendation-system-part-1-9159a16b3fce
 #### blog 2 :
 #### blog 3 :
 
